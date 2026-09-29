@@ -42,26 +42,33 @@ def aging() -> dict:
     return dashboard.aging(conn, clock.parse(clock.DEMO_NOW))
 
 
-def make_handler(fn):
-    """fn(query: dict[str, str]) -> dict. KeyError => 404, anything else => 500."""
-    class handler(BaseHTTPRequestHandler):
-        def do_GET(self):
-            q = {k: v[0] for k, v in parse_qs(urlparse(self.path).query).items()}
-            try:
-                code, body = 200, fn(q)
-            except KeyError as exc:
-                code, body = 404, {"error": str(exc.args[0]) if exc.args else "not found"}
-            except Exception as exc:  # never leak a traceback to the browser
-                code, body = 500, {"error": type(exc).__name__}
-            data = json.dumps(body).encode()
-            self.send_response(code)
-            self.send_header("Content-Type", "application/json")
-            self.send_header("Content-Length", str(len(data)))
-            # Output is deterministic (frozen clock, mocked data), so it is safe to cache at the edge.
-            self.send_header("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400" if code == 200 else "no-store")
-            self.end_headers()
-            self.wfile.write(data)
+class JSONHandler(BaseHTTPRequestHandler):
+    """Base for the Vercel functions. Subclasses implement route(query) -> dict.
 
-        def log_message(self, *a):
-            pass
-    return handler
+    Vercel only detects a Python function when the file itself defines `class handler`,
+    so each api/*.py subclasses this instead of assigning a factory result.
+    KeyError => 404, anything else => 500.
+    """
+
+    def route(self, query: dict[str, str]) -> dict:
+        raise NotImplementedError
+
+    def do_GET(self):
+        q = {k: v[0] for k, v in parse_qs(urlparse(self.path).query).items()}
+        try:
+            code, body = 200, self.route(q)
+        except KeyError as exc:
+            code, body = 404, {"error": str(exc.args[0]) if exc.args else "not found"}
+        except Exception as exc:  # never leak a traceback to the browser
+            code, body = 500, {"error": type(exc).__name__}
+        data = json.dumps(body).encode()
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(data)))
+        # Output is deterministic (frozen clock, mocked data), so it is safe to cache at the edge.
+        self.send_header("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400" if code == 200 else "no-store")
+        self.end_headers()
+        self.wfile.write(data)
+
+    def log_message(self, *a):
+        pass

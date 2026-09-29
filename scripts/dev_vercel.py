@@ -11,6 +11,8 @@ from urllib.parse import urlparse
 ROOT = Path(__file__).resolve().parent.parent
 sys.path[:0] = [str(ROOT), str(ROOT / "api")]
 
+from openpango.web import JSONHandler  # noqa: E402
+
 
 class Dev(SimpleHTTPRequestHandler):
     def __init__(self, *a, **kw):
@@ -20,7 +22,8 @@ class Dev(SimpleHTTPRequestHandler):
         path = urlparse(self.path).path
         if path.startswith("/api/"):
             mod = importlib.import_module(path[5:].strip("/"))
-            return mod.handler.do_GET(self)
+            self.route = lambda q: mod.handler.route(self, q)
+            return JSONHandler.do_GET(self)
         if path == "/":
             self.path = "/index.html"
         return super().do_GET()

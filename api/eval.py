@@ -3,6 +3,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from openpango import web
+from openpango import web  # noqa: E402
 
-handler = web.make_handler(lambda q: web.eval_all())
+
+class handler(web.JSONHandler):
+    def route(self, q):
+        return web.eval_all()

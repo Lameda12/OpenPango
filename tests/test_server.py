@@ -56,4 +56,20 @@ def test_vercel_config_is_valid_and_points_at_real_paths():
     root = Path(__file__).resolve().parent.parent
     cfg = json.loads((root / "vercel.json").read_text())
     assert (root / cfg["outputDirectory"] / "index.html").exists()
-    assert sorted(p.name for p in (root / "api").glob("*.py")) == ["dashboard.py", "eval.py", "incidents.py", "replay.py"]
+    api = sorted((root / "api").glob("*.py"))
+    assert [p.name for p in api] == ["dashboard.py", "eval.py", "incidents.py", "replay.py"]
+    # Vercel skips any api/*.py that does not literally define `class handler` (or `app`),
+    # and then fails the build because the `functions` pattern matches nothing.
+    for p in api:
+        assert "\nclass handler(" in p.read_text(), f"{p.name} is not detectable as a Vercel function"
+
+
+def test_vercel_function_handlers_route():
+    import importlib.util
+    from pathlib import Path
+    root = Path(__file__).resolve().parent.parent
+    spec = importlib.util.spec_from_file_location("api_replay", root / "api" / "replay.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    out = mod.handler.route(None, {"incident": "1042-customs"})
+    assert out["action"] == "carrier_inquiry"
