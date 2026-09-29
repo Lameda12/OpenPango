@@ -1,0 +1,74 @@
+{
+  "id": "late-weather",
+  "title": "Order #1057 late after a weather delay, carrier ETA passed",
+  "clock": "2026-09-29T12:00:00Z",
+  "order": {
+    "number": "1057",
+    "customer_name": "Jordan Reyes",
+    "email": "jordan@example.com",
+    "items": "Linen throw blanket",
+    "total_cents": 6200,
+    "placed_at_ago_days": 9,
+    "country": "US",
+    "address": "12 Example St"
+  },
+  "shipment": {
+    "carrier": "UPS",
+    "service": "Ground",
+    "tracking_number": "1Z999AA10123456784",
+    "shipped_at_ago_days": 7,
+    "weight_g": 1200,
+    "carrier_eta": null
+  },
+  "events": [
+    {
+      "ago_days": 7,
+      "code": "PICKED_UP",
+      "description": "Origin scan",
+      "location": "Portland, OR",
+      "eta": "2026-09-24"
+    },
+    {
+      "ago_days": 5,
+      "code": "IN_TRANSIT",
+      "description": "Departed facility",
+      "location": "Columbus, OH",
+      "eta": null
+    },
+    {
+      "ago_days": 3,
+      "code": "DELAY",
+      "description": "Delay: severe weather at regional hub",
+      "location": "Louisville, KY",
+      "eta": null
+    }
+  ],
+  "tickets": [],
+  "return": null,
+  "expected": {
+    "exception": "late",
+    "action": "carrier_inquiry",
+    "tools": [
+      "open_ticket",
+      "draft_customer_email"
+    ],
+    "approval": "none",
+    "ticket_kind": "carrier_inquiry",
+    "copy": {
+      "required": [
+        "1Z999AA10123456784",
+        "Sep 24, 2026",
+        "Delay: severe weather at regional hub",
+        "has passed",
+        "won't guess"
+      ],
+      "forbidden": [
+        "will arrive",
+        "guarantee",
+        "should arrive",
+        "refund has been issued",
+        "refund"
+      ]
+    }
+  }
+}

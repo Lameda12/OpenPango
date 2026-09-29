@@ -1,0 +1,75 @@
+{
+  "id": "damaged-refund",
+  "title": "Order #1091 arrived damaged, $40 refund auto-approved",
+  "clock": "2026-09-29T12:00:00Z",
+  "order": {
+    "number": "1091",
+    "customer_name": "Tomas Lindqvist",
+    "email": "tomas@example.com",
+    "items": "Ceramic mug set",
+    "total_cents": 5200,
+    "placed_at_ago_days": 12,
+    "country": "US",
+    "address": "215 Lake Shore Dr, Chicago, IL"
+  },
+  "shipment": {
+    "carrier": "UPS",
+    "service": "Ground",
+    "tracking_number": "1Z999AA10777777777",
+    "shipped_at_ago_days": 9,
+    "weight_g": 1200,
+    "carrier_eta": null
+  },
+  "events": [
+    {
+      "ago_days": 9,
+      "code": "PICKED_UP",
+      "description": "Origin scan",
+      "location": "Portland, OR",
+      "eta": null
+    },
+    {
+      "ago_days": 8,
+      "code": "IN_TRANSIT",
+      "description": "Departed facility",
+      "location": "Omaha, NE",
+      "eta": null
+    },
+    {
+      "ago_days": 6,
+      "code": "DELIVERED",
+      "description": "Delivered, front door",
+      "location": "Chicago, IL",
+      "eta": null
+    }
+  ],
+  "tickets": [],
+  "return": {
+    "reason": "damaged",
+    "amount_cents": 4000,
+    "ago_days": 1
+  },
+  "expected": {
+    "exception": "return_request",
+    "action": "auto_refund",
+    "tools": [
+      "approve_refund",
+      "draft_customer_email"
+    ],
+    "approval": "auto",
+    "ticket_kind": null,
+    "copy": {
+      "required": [
+        "1Z999AA10777777777",
+        "Sep 23, 2026",
+        "$40.00",
+        "has been issued"
+      ],
+      "forbidden": [
+        "review",
+        "pending",
+        "guarantee"
+      ]
+    }
+  }
+}
