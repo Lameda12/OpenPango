@@ -41,6 +41,16 @@ python -m openpango serve    # ops inbox at http://127.0.0.1:8000
 python -m pytest -q          # needs: pip install pytest
 ```
 
+## Web demo (Vercel)
+
+A read-only live demo lives in `public/` (static page) and `api/` (Python functions). Each request replays incidents into a fresh in-memory DB, so nothing is stored. Approvals and sending stay in the local inbox, which needs a persistent process.
+
+```bash
+python scripts/dev_vercel.py      # local stand-in for `vercel dev`, http://127.0.0.1:3000
+```
+
+Deploy: import the repo in Vercel and leave the framework preset as "Other". `vercel.json` sets the output directory, bundles `openpango/**` into the functions, and adds security headers. No env vars, no build step. Endpoints: `/api/incidents`, `/api/replay?incident=1042-customs`, `/api/eval`, `/api/dashboard`. Responses are deterministic and sent with edge cache headers.
+
 ## Product rules and where they are enforced
 
 | Rule | Enforcement |

@@ -1,0 +1,1 @@
+# OpenPango has no runtime dependencies. This file exists so Vercel's Python runtime treats the repo as a Python project.

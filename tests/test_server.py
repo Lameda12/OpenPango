@@ -39,3 +39,21 @@ def test_send_blocked_draft_is_refused():
     app = server.build_app()
     code, _ = app.post("/api/drafts/999/send", {})
     assert code == 409
+
+
+def test_web_demo_payloads():
+    from openpango import web
+    assert len(web.incidents()["incidents"]) == 10
+    r = web.replay_incident("1042")
+    assert r["action"] == "carrier_inquiry" and r["events"][0]["code"] == "PICKED_UP" and "JD014600006281" in r["draft"]["body"]
+    assert web.eval_all()["passed"] == 10
+    assert web.aging()["buckets"]["stuck_customs"]["count"] == 1
+
+
+def test_vercel_config_is_valid_and_points_at_real_paths():
+    import json
+    from pathlib import Path
+    root = Path(__file__).resolve().parent.parent
+    cfg = json.loads((root / "vercel.json").read_text())
+    assert (root / cfg["outputDirectory"] / "index.html").exists()
+    assert sorted(p.name for p in (root / "api").glob("*.py")) == ["dashboard.py", "eval.py", "incidents.py", "replay.py"]
