@@ -1,0 +1,82 @@
+{
+  "id": "lost-package",
+  "title": "Order #1084 lost in transit, $120 refund requested",
+  "clock": "2026-09-29T12:00:00Z",
+  "order": {
+    "number": "1084",
+    "customer_name": "Elena Markovi\u0107",
+    "email": "elena@example.com",
+    "items": "Handwoven wool rug",
+    "total_cents": 12000,
+    "placed_at_ago_days": 24,
+    "country": "US",
+    "address": "9 Oak Lane, Kansas City, MO"
+  },
+  "shipment": {
+    "carrier": "USPS",
+    "service": "Ground Advantage",
+    "tracking_number": "9205590109273512349036",
+    "shipped_at_ago_days": 20,
+    "weight_g": 4200,
+    "carrier_eta": null
+  },
+  "events": [
+    {
+      "ago_days": 20,
+      "code": "PICKED_UP",
+      "description": "USPS picked up item",
+      "location": "Portland, OR",
+      "eta": null
+    },
+    {
+      "ago_days": 17,
+      "code": "IN_TRANSIT",
+      "description": "Departed USPS facility",
+      "location": "Boise, ID",
+      "eta": null
+    },
+    {
+      "ago_days": 14,
+      "code": "ARRIVED_HUB",
+      "description": "Arrived at USPS regional facility",
+      "location": "Kansas City, MO",
+      "eta": null
+    }
+  ],
+  "tickets": [],
+  "return": {
+    "reason": "not_received",
+    "amount_cents": 12000,
+    "ago_days": 1
+  },
+  "expected": {
+    "exception": "lost",
+    "action": "escalate_for_approval",
+    "tools": [
+      "open_ticket",
+      "approve_refund",
+      "draft_customer_email"
+    ],
+    "approval": "pending",
+    "ticket_kind": "carrier_claim",
+    "copy": {
+      "required": [
+        "9205590109273512349036",
+        "Sep 15, 2026",
+        "14 days",
+        "claim",
+        "$120.00",
+        "sent to our team for review"
+      ],
+      "forbidden": [
+        "will arrive",
+        "guarantee",
+        "should arrive",
+        "refund has been issued",
+        "will be refunded",
+        "has been issued",
+        "is approved"
+      ]
+    }
+  }
+}

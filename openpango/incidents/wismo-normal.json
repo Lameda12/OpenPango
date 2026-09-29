@@ -1,0 +1,70 @@
+{
+  "id": "wismo-normal",
+  "title": "Order #1063 WISMO, package moving normally",
+  "clock": "2026-09-29T12:00:00Z",
+  "order": {
+    "number": "1063",
+    "customer_name": "Priya Nair",
+    "email": "priya@example.com",
+    "items": "Cast iron trivet",
+    "total_cents": 3800,
+    "placed_at_ago_days": 4,
+    "country": "US",
+    "address": "12 Example St"
+  },
+  "shipment": {
+    "carrier": "USPS",
+    "service": "Priority Mail",
+    "tracking_number": "9400111899223197428490",
+    "shipped_at_ago_days": 3,
+    "weight_g": 1200,
+    "carrier_eta": null
+  },
+  "events": [
+    {
+      "ago_days": 3,
+      "code": "PICKED_UP",
+      "description": "USPS picked up item",
+      "location": "Portland, OR",
+      "eta": null
+    },
+    {
+      "ago_days": 1,
+      "code": "IN_TRANSIT",
+      "description": "Arrived at USPS regional facility",
+      "location": "Denver, CO",
+      "eta": "2026-10-02"
+    }
+  ],
+  "tickets": [
+    {
+      "kind": "wismo",
+      "subject": "Where is my order?",
+      "body": "Any update on my package?",
+      "ago_days": 1
+    }
+  ],
+  "return": null,
+  "expected": {
+    "exception": "wismo",
+    "action": "status_reply",
+    "tools": [
+      "draft_customer_email"
+    ],
+    "approval": "none",
+    "ticket_kind": null,
+    "copy": {
+      "required": [
+        "9400111899223197428490",
+        "Arrived at USPS regional facility",
+        "Sep 28, 2026",
+        "Oct 2, 2026"
+      ],
+      "forbidden": [
+        "refund",
+        "guarantee",
+        "will arrive"
+      ]
+    }
+  }
+}

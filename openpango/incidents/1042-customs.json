@@ -1,0 +1,96 @@
+{
+  "id": "1042-customs",
+  "title": "Order #1042 stuck in customs for 9 days",
+  "clock": "2026-09-29T12:00:00Z",
+  "order": {
+    "number": "1042",
+    "customer_name": "Maya Okafor",
+    "email": "maya@example.com",
+    "items": "Stoneware pour-over set",
+    "total_cents": 8400,
+    "placed_at_ago_days": 19,
+    "country": "CA",
+    "address": "410 Queen St W, Toronto, ON"
+  },
+  "shipment": {
+    "carrier": "DHL Express",
+    "service": "International Express",
+    "tracking_number": "JD014600006281",
+    "shipped_at_ago_days": 16,
+    "weight_g": 1800,
+    "carrier_eta": null
+  },
+  "events": [
+    {
+      "ago_days": 16,
+      "code": "PICKED_UP",
+      "description": "Shipment picked up",
+      "location": "Portland, OR",
+      "eta": null
+    },
+    {
+      "ago_days": 14,
+      "code": "IN_TRANSIT",
+      "description": "Departed origin facility",
+      "location": "Portland, OR",
+      "eta": null
+    },
+    {
+      "ago_days": 11,
+      "code": "ARRIVED_HUB",
+      "description": "Arrived at destination gateway",
+      "location": "Toronto, ON",
+      "eta": null
+    },
+    {
+      "ago_days": 9,
+      "code": "CUSTOMS_HOLD",
+      "description": "Clearance processing: held for customs inspection",
+      "location": "Toronto, ON",
+      "eta": null
+    },
+    {
+      "ago_days": 6,
+      "code": "CUSTOMS_DELAY",
+      "description": "Customs clearance delayed: awaiting documentation",
+      "location": "Toronto, ON",
+      "eta": null
+    }
+  ],
+  "tickets": [
+    {
+      "kind": "wismo",
+      "subject": "Where is my order?",
+      "body": "It has been over two weeks. Where is it?",
+      "ago_days": 2
+    }
+  ],
+  "return": null,
+  "expected": {
+    "exception": "stuck_customs",
+    "action": "carrier_inquiry",
+    "tools": [
+      "open_ticket",
+      "draft_customer_email"
+    ],
+    "approval": "none",
+    "ticket_kind": "carrier_inquiry",
+    "copy": {
+      "required": [
+        "JD014600006281",
+        "customs",
+        "9 days",
+        "Sep 23, 2026",
+        "Customs clearance delayed: awaiting documentation",
+        "has not provided an estimated delivery date"
+      ],
+      "forbidden": [
+        "will arrive",
+        "guarantee",
+        "should arrive",
+        "refund has been issued",
+        "refund"
+      ]
+    }
+  }
+}

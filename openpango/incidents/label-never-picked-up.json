@@ -1,0 +1,59 @@
+{
+  "id": "label-never-picked-up",
+  "title": "Order #1119 label created 6 days ago, never picked up",
+  "clock": "2026-09-29T12:00:00Z",
+  "order": {
+    "number": "1119",
+    "customer_name": "Hana Kobayashi",
+    "email": "hana@example.com",
+    "items": "Indigo tea towels",
+    "total_cents": 2900,
+    "placed_at_ago_days": 7,
+    "country": "US",
+    "address": "12 Example St"
+  },
+  "shipment": {
+    "carrier": "FedEx",
+    "service": "Home Delivery",
+    "tracking_number": "794644790999",
+    "shipped_at_ago_days": 6,
+    "weight_g": 1200,
+    "carrier_eta": null
+  },
+  "events": [
+    {
+      "ago_days": 6,
+      "code": "LABEL_CREATED",
+      "description": "Shipping label created, awaiting package",
+      "location": "Portland, OR",
+      "eta": null
+    }
+  ],
+  "tickets": [],
+  "return": null,
+  "expected": {
+    "exception": "not_picked_up",
+    "action": "pickup_chase",
+    "tools": [
+      "open_ticket",
+      "draft_customer_email"
+    ],
+    "approval": "none",
+    "ticket_kind": "pickup_chase",
+    "copy": {
+      "required": [
+        "794644790999",
+        "Sep 23, 2026",
+        "6 days ago",
+        "has not scanned the package as picked up"
+      ],
+      "forbidden": [
+        "will arrive",
+        "guarantee",
+        "should arrive",
+        "refund has been issued",
+        "refund"
+      ]
+    }
+  }
+}

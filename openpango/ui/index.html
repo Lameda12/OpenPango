@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenPango Ops Inbox</title>
+<style>
+:root{--bg:#f6f4ef;--panel:#fffdf8;--ink:#1c1a17;--mute:#6f6a60;--line:#e2ddd0;--acc:#0b6b5c;--warn:#b4531a;--bad:#a4262c;--ok:#2f7d32}
+@media (prefers-color-scheme:dark){:root{--bg:#141311;--panel:#1c1b18;--ink:#eee9dd;--mute:#9b9585;--line:#34322c;--acc:#4fc3ad;--warn:#e59a5b;--bad:#f07178;--ok:#7fcf84}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;padding:20px 16px 8px;max-width:1200px;margin:0 auto}
+h1{font-size:20px;margin:0;letter-spacing:.02em}
+h2{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute);margin:28px 0 10px}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+main{max-width:1200px;margin:0 auto;padding:0 16px 60px}
+.pill{font-size:12px;padding:2px 8px;border:1px solid var(--line);border-radius:99px;color:var(--mute)}
+.pill.ok{color:var(--ok);border-color:var(--ok)}.pill.bad{color:var(--bad);border-color:var(--bad)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card .n{font:600 34px/1 ui-monospace,Menlo,monospace}
+.card .sub{color:var(--mute);font-size:13px;margin:4px 0 10px}
+.card.hot .n{color:var(--warn)}
+.row{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-top:1px solid var(--line);font-size:13px}
+.age{font-family:ui-monospace,Menlo,monospace;color:var(--warn);white-space:nowrap}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.item .top{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between}
+pre{white-space:pre-wrap;margin:10px 0 0;font:13px/1.55 ui-monospace,Menlo,monospace;color:var(--ink)}
+button{font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--ink);padding:5px 12px;border-radius:7px;cursor:pointer}
+button.go{border-color:var(--acc);color:var(--acc)}button.stop{border-color:var(--bad);color:var(--bad)}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.viol{color:var(--bad);font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:12px}td,th{text-align:left;padding:4px 6px;border-top:1px solid var(--line);vertical-align:top}
+th{color:var(--mute);font-weight:500}
+.tw{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>OpenPango <span style="color:var(--mute);font-weight:400">ops inbox</span></h1>
+  <span id="clock" class="pill mono"></span>
+  <span id="chain" class="pill"></span>
+</header>
+<main>
+  <h2>Aging exceptions</h2><div id="aging" class="grid"></div>
+  <h2>Needs a human</h2><div id="approvals"></div>
+  <h2>Draft replies</h2><div id="drafts"></div>
+  <h2>Open carrier / return tickets</h2><div id="tickets" class="tw"></div>
+  <h2>Event log (newest first, hash-chained)</h2><div id="events" class="tw"></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const money=c=>"$"+(c/100).toFixed(2);
+const LABEL={late:"Late",stuck_customs:"Stuck in customs",refused_delivery:"Refused delivery",wismo:"WISMO tickets",other:"Other exceptions"};
+async function j(url,opt){const r=await fetch(url,opt);return r.json()}
+async function post(url,body){const r=await fetch(url,{method:"POST",body:JSON.stringify(body||{})});const d=await r.json();if(!r.ok)alert(d.error);load()}
+async function load(){
+  const [dash,inbox,ev]=await Promise.all([j("/api/dashboard"),j("/api/inbox"),j("/api/events")]);
+  $("clock").textContent="clock "+dash.now;
+  $("chain").textContent=ev.chain_ok?"log chain verified":"LOG TAMPERED at event "+ev.first_bad;
+  $("chain").className="pill "+(ev.chain_ok?"ok":"bad");
+  $("aging").innerHTML=Object.entries(dash.buckets).map(([k,b])=>`
+    <div class="card ${b.count?"hot":""}"><div class="n">${b.count}</div>
+    <div class="sub">${LABEL[k]}${b.count?` · oldest ${b.oldest_days}d`:""}</div>
+    ${b.items.map(i=>`<div class="row"><span>#${esc(i.order)} ${esc(i.customer)}<br><span style="color:var(--mute)">${esc(i.type)}: ${esc(i.detail)}</span></span><span class="age">${i.age_days}d</span></div>`).join("")}</div>`).join("");
+  const pend=inbox.approvals.filter(a=>a.status==="pending");
+  $("approvals").innerHTML=pend.length?pend.map(a=>`<div class="item"><div class="top">
+    <span><b>#${esc(a.number)}</b> ${esc(a.customer_name)} · refund <b>${money(a.amount_cents)}</b> · <span class="pill">${esc(a.reason_code)}</span></span>
+    <span><button class="go" onclick="post('/api/approvals/${a.id}',{approve:true})">Approve</button>
+    <button class="stop" onclick="post('/api/approvals/${a.id}',{approve:false})">Reject</button></span></div></div>`).join("")
+    :`<div class="item" style="color:var(--mute)">Nothing waiting on approval.</div>`;
+  $("drafts").innerHTML=inbox.drafts.map(d=>`<div class="item"><div class="top">
+    <span><b>#${esc(d.number)}</b> ${esc(d.customer_name)} · ${esc(d.subject)}
+      <span class="pill ${d.status==="blocked"?"bad":d.status==="sent"?"ok":""}">${esc(d.status)}</span></span>
+    <span>${d.status==="ready"?`<button class="go" onclick="post('/api/drafts/${d.id}/send')">Send</button>`:""}</span></div>
+    ${JSON.parse(d.violations_json).map(v=>`<div class="viol">${esc(v.kind)}: ${esc(v.text)}</div>`).join("")}
+    <pre>${esc(d.body)}</pre></div>`).join("");
+  $("tickets").innerHTML=`<table><tr><th>Order</th><th>Kind</th><th>Subject</th><th>Carrier ref</th><th>Due</th></tr>${
+    inbox.tickets.map(t=>`<tr><td>#${esc(t.number)}</td><td>${esc(t.kind)}</td><td>${esc(t.subject)}</td><td class="mono">${esc(t.carrier_ref)}</td><td class="mono">${esc((t.due_at||"").slice(0,10))}</td></tr>`).join("")}</table>`;
+  $("events").innerHTML=`<table><tr><th>#</th><th>Actor</th><th>Tool</th><th>Payload</th><th>Hash</th></tr>${
+    ev.events.slice(0,60).map(e=>`<tr><td>${e.id}</td><td>${esc(e.actor)}</td><td>${esc(e.tool)}</td><td class="mono">${esc(JSON.stringify(e.payload))}</td><td class="mono">${e.hash.slice(0,10)}</td></tr>`).join("")}</table>`;
+}
+load();
+</script>
+</body>
+</html>

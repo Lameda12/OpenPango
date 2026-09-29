@@ -1,0 +1,77 @@
+{
+  "id": "return-late",
+  "title": "Order #1098 return requested 45 days after delivery, $90",
+  "clock": "2026-09-29T12:00:00Z",
+  "order": {
+    "number": "1098",
+    "customer_name": "Aisha Rahman",
+    "email": "aisha@example.com",
+    "items": "Down comforter",
+    "total_cents": 9000,
+    "placed_at_ago_days": 55,
+    "country": "US",
+    "address": "18 Pine St, Seattle, WA"
+  },
+  "shipment": {
+    "carrier": "USPS",
+    "service": "Priority Mail",
+    "tracking_number": "9400111899222222222222",
+    "shipped_at_ago_days": 50,
+    "weight_g": 3000,
+    "carrier_eta": null
+  },
+  "events": [
+    {
+      "ago_days": 50,
+      "code": "PICKED_UP",
+      "description": "USPS picked up item",
+      "location": "Portland, OR",
+      "eta": null
+    },
+    {
+      "ago_days": 48,
+      "code": "IN_TRANSIT",
+      "description": "Arrived at USPS regional facility",
+      "location": "Tacoma, WA",
+      "eta": null
+    },
+    {
+      "ago_days": 45,
+      "code": "DELIVERED",
+      "description": "Delivered, mailbox",
+      "location": "Seattle, WA",
+      "eta": null
+    }
+  ],
+  "tickets": [],
+  "return": {
+    "reason": "changed_mind",
+    "amount_cents": 9000,
+    "ago_days": 0.5
+  },
+  "expected": {
+    "exception": "return_request",
+    "action": "deny_return_escalate",
+    "tools": [
+      "open_ticket",
+      "draft_customer_email"
+    ],
+    "approval": "none",
+    "ticket_kind": "return_review",
+    "copy": {
+      "required": [
+        "9400111899222222222222",
+        "Aug 15, 2026",
+        "30 days",
+        "$90.00",
+        "45 days ago",
+        "outside the window"
+      ],
+      "forbidden": [
+        "has been issued",
+        "approved",
+        "guarantee"
+      ]
+    }
+  }
+}

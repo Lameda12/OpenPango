@@ -1,0 +1,82 @@
+{
+  "id": "delivered-not-received",
+  "title": "Order #1112 marked delivered, customer says no",
+  "clock": "2026-09-29T12:00:00Z",
+  "order": {
+    "number": "1112",
+    "customer_name": "Noah Fitzgerald",
+    "email": "noah@example.com",
+    "items": "Enamel camp mugs",
+    "total_cents": 5400,
+    "placed_at_ago_days": 8,
+    "country": "US",
+    "address": "301 SE Alder St, Portland, OR"
+  },
+  "shipment": {
+    "carrier": "UPS",
+    "service": "Ground",
+    "tracking_number": "1Z999AA10555555555",
+    "shipped_at_ago_days": 6,
+    "weight_g": 1200,
+    "carrier_eta": null
+  },
+  "events": [
+    {
+      "ago_days": 6,
+      "code": "PICKED_UP",
+      "description": "Origin scan",
+      "location": "Portland, OR",
+      "eta": null
+    },
+    {
+      "ago_days": 4,
+      "code": "IN_TRANSIT",
+      "description": "Departed facility",
+      "location": "Salem, OR",
+      "eta": null
+    },
+    {
+      "ago_days": 2,
+      "code": "DELIVERED",
+      "description": "Delivered, left at front porch",
+      "location": "Portland, OR",
+      "eta": null
+    }
+  ],
+  "tickets": [
+    {
+      "kind": "not_received",
+      "subject": "Says delivered but nothing here",
+      "body": "Tracking says delivered. I have nothing.",
+      "ago_days": 1
+    }
+  ],
+  "return": null,
+  "expected": {
+    "exception": "delivered_dispute",
+    "action": "carrier_claim",
+    "tools": [
+      "open_ticket",
+      "draft_customer_email"
+    ],
+    "approval": "none",
+    "ticket_kind": "carrier_claim",
+    "copy": {
+      "required": [
+        "1Z999AA10555555555",
+        "Sep 27, 2026",
+        "Delivered, left at front porch",
+        "opened a claim",
+        "Oct 4, 2026"
+      ],
+      "forbidden": [
+        "will arrive",
+        "guarantee",
+        "should arrive",
+        "refund has been issued",
+        "refund",
+        "reship"
+      ]
+    }
+  }
+}

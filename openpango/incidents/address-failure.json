@@ -1,0 +1,82 @@
+{
+  "id": "address-failure",
+  "title": "Order #1105 delivery failed, address not found",
+  "clock": "2026-09-29T12:00:00Z",
+  "order": {
+    "number": "1105",
+    "customer_name": "Chloe Bergstr\u00f6m",
+    "email": "chloe@example.com",
+    "items": "Beeswax candle set",
+    "total_cents": 4600,
+    "placed_at_ago_days": 6,
+    "country": "US",
+    "address": "88 Harbour St, Boston, MA"
+  },
+  "shipment": {
+    "carrier": "UPS",
+    "service": "Ground",
+    "tracking_number": "1Z999AA10198765432",
+    "shipped_at_ago_days": 4,
+    "weight_g": 1200,
+    "carrier_eta": null
+  },
+  "events": [
+    {
+      "ago_days": 4,
+      "code": "PICKED_UP",
+      "description": "Origin scan",
+      "location": "Portland, OR",
+      "eta": null
+    },
+    {
+      "ago_days": 3,
+      "code": "IN_TRANSIT",
+      "description": "Departed facility",
+      "location": "Albany, NY",
+      "eta": null
+    },
+    {
+      "ago_days": 2,
+      "code": "ADDRESS_ISSUE",
+      "description": "Delivery attempted: address not found",
+      "location": "Boston, MA",
+      "eta": null
+    }
+  ],
+  "tickets": [
+    {
+      "kind": "address_update",
+      "subject": "Wrong address on my order",
+      "body": "Sorry, I typo'd it.\nCorrected address: 88 Harbor St Apt 4B, Boston, MA 02110",
+      "ago_days": 1
+    }
+  ],
+  "return": null,
+  "expected": {
+    "exception": "address_issue",
+    "action": "reissue_label",
+    "tools": [
+      "rerate_shipment",
+      "issue_label",
+      "draft_customer_email"
+    ],
+    "approval": "none",
+    "ticket_kind": null,
+    "copy": {
+      "required": [
+        "$PREVIOUS_TRACKING",
+        "$TRACKING",
+        "delivery address problem",
+        "new tracking number",
+        "do not have a delivery estimate"
+      ],
+      "forbidden": [
+        "will arrive",
+        "guarantee",
+        "should arrive",
+        "refund has been issued",
+        "refund"
+      ]
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "id": "refused-delivery",
+  "title": "Order #1071 refused at the door, returning to sender",
+  "clock": "2026-09-29T12:00:00Z",
+  "order": {
+    "number": "1071",
+    "customer_name": "Sam Whitfield",
+    "email": "sam@example.com",
+    "items": "Walnut cutting board",
+    "total_cents": 9800,
+    "placed_at_ago_days": 12,
+    "country": "US",
+    "address": "77 Congress Ave, Austin, TX"
+  },
+  "shipment": {
+    "carrier": "FedEx",
+    "service": "Home Delivery",
+    "tracking_number": "794644790138",
+    "shipped_at_ago_days": 10,
+    "weight_g": 1200,
+    "carrier_eta": null
+  },
+  "events": [
+    {
+      "ago_days": 10,
+      "code": "PICKED_UP",
+      "description": "Picked up",
+      "location": "Portland, OR",
+      "eta": null
+    },
+    {
+      "ago_days": 8,
+      "code": "IN_TRANSIT",
+      "description": "In transit",
+      "location": "Salt Lake City, UT",
+      "eta": null
+    },
+    {
+      "ago_days": 5,
+      "code": "OUT_FOR_DELIVERY",
+      "description": "On FedEx vehicle for delivery",
+      "location": "Austin, TX",
+      "eta": null
+    },
+    {
+      "ago_days": 5,
+      "code": "REFUSED",
+      "description": "Delivery refused by recipient",
+      "location": "Austin, TX",
+      "eta": null
+    },
+    {
+      "ago_days": 3,
+      "code": "RETURN_TO_SENDER",
+      "description": "Return to sender in transit",
+      "location": "Dallas, TX",
+      "eta": null
+    }
+  ],
+  "tickets": [],
+  "return": null,
+  "expected": {
+    "exception": "refused",
+    "action": "rts_followup",
+    "tools": [
+      "open_ticket",
+      "draft_customer_email"
+    ],
+    "approval": "none",
+    "ticket_kind": "rts_followup",
+    "copy": {
+      "required": [
+        "794644790138",
+        "refused",
+        "Sep 24, 2026",
+        "being returned to us",
+        "Return to sender in transit"
+      ],
+      "forbidden": [
+        "will arrive",
+        "guarantee",
+        "should arrive",
+        "refund has been issued"
+      ]
+    }
+  }
+}

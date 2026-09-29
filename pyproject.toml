@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openpango"
+version = "0.1.0"
+description = "Open-source agent harness for post-purchase ops at a small DTC store"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = []
+
+[project.optional-dependencies]
+llm = ["anthropic>=0.40"]
+dev = ["pytest>=8"]
+
+[project.scripts]
+openpango = "openpango.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["openpango*"]
+
+[tool.setuptools.package-data]
+openpango = ["incidents/*.json", "ui/*.html"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
